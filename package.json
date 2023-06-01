@@ -10,7 +10,9 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "vue": "^3.3.2"
+    "axios": "^1.4.0",
+    "vue": "^3.3.2",
+    "vue-multiselect": "^3.0.0-beta.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
