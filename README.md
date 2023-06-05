@@ -1,4 +1,6 @@
-# crypto-exchange
+# Crypto-Exchange
+
+## Demo - <https://vue-cryptocurrency-exchange.netlify.app/>
 
 This template should help get you started developing with Vue 3 in Vite.
 
