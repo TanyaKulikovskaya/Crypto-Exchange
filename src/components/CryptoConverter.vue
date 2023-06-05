@@ -102,10 +102,10 @@
         Exchange
       </button>
       <p
-        v-show="error"
+        v-show="minAmountError || estimatedError"
         class="absolute bottom-0 right-0 w-full md:w-3/12 text-center text-[#E03F3F]"
       >
-        {{ error }}
+        {{ minAmountError || estimatedError}}
       </p>
     </div>
   </div>
@@ -124,11 +124,11 @@ load()
 
 const baseCoinAmount = ref('')
 const baseCoinMinAmount = ref('')
-const baseAmountError = ref('')
-
 const convertCoinAmount = ref('')
 
-const error = ref('')
+const baseAmountError = ref('')
+const minAmountError = ref('')
+const estimatedError = ref('')
 
 const isBaseSelectOpen = ref(false)
 const toggleBaseSelect = () => {
@@ -141,6 +141,8 @@ const toggleConvertSelect = () => {
 }
 
 watch([baseCoin, convertCoin], (newValue) => {
+  convertCoinAmount.value = ''
+  minAmountError.value = ''
   const tickers = {
     from: newValue[0].ticker,
     to: newValue[1].ticker
@@ -151,26 +153,25 @@ const getMinExchangeAmount = async (tickers) => {
   try {
     const response = await Currencies.fetchMinExchangeAmount(tickers)
     const { minAmount } = response
-    if (minAmount) {
-      baseCoinAmount.value = minAmount
-      baseCoinMinAmount.value = minAmount
-    } else {
-      error.value = 'This pair is disabled now.'
-    }
+    baseCoinAmount.value = minAmount
+    baseCoinMinAmount.value = minAmount
   } catch (err) {
-    baseCoinAmount.value = ''
-    console.log('err', err)
+    baseCoinAmount.value = '-'
+    minAmountError.value = 'This pair is disabled now.'
   }
 }
 
 watch(baseCoinAmount, (newValue) => {
-  if (isNaN(newValue) || newValue === '') {
+  if (minAmountError.value) {
+    return
+  } else if (isNaN(newValue) || newValue === '') {
     baseAmountError.value = 'Please enter a valid number.'
   } else if (
     Number.parseFloat(baseCoinAmount.value) >= Number.parseFloat(baseCoinMinAmount.value)
   ) {
-    updateEstimated(newValue)
+    estimatedError.value = ''
     baseAmountError.value = ''
+    updateEstimated(newValue)
   } else {
     convertCoinAmount.value = '-'
     baseAmountError.value = 'The entered value is below the min amount.'
@@ -188,13 +189,9 @@ const getEstimated = async (amount) => {
   try {
     const response = await Currencies.fetchEstimated(data)
     const { estimatedAmount } = response
-    if (estimatedAmount) {
-      convertCoinAmount.value = estimatedAmount.toFixed(9)
-    } else {
-      error.value = 'This pair is disabled now.'
-    }
+    convertCoinAmount.value = estimatedAmount.toFixed(9)
   } catch (err) {
-    console.log('err', err)
+    estimatedError.value = 'This pair is disabled now.'
   }
 }
 </script>
