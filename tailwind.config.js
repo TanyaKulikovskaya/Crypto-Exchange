@@ -5,7 +5,10 @@ module.exports = {
     extend: {
       margin: {
         '60px': '60px',
-      }
+      },
+      colors: {
+        'custom-gray': '#282828',
+      },
     },
     fontFamily: {
       sans: ['Vollkorn', 'serif'],
