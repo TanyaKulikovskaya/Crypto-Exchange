@@ -5,9 +5,9 @@
         <input
           type="text"
           v-model.trim="baseCoinAmount"
-          class="appearance-none border border-[#e3ebef] bg-[#f6f7f8] w-2/3 rounded-l-md py-3 px-4 focus:outline-none"
+          class="appearance-none border border-[#e3ebef] bg-[#f6f7f8] rounded-l-md w-3/5 md:w-2/3 py-3 px-4 focus:outline-none"
         />
-        <div class="absolute top-0 right-0" :class="[isBaseSelectOpen ? 'w-full z-10' : 'w-1/3']">
+        <div class="absolute top-0 right-0" :class="[isBaseSelectOpen ? 'w-full z-10' : 'w-2/5 md:w-1/3']">
           <VueMultiselect
             v-model="baseCoin"
             :options="currencies"
@@ -46,7 +46,7 @@
         </p>
       </div>
       <button
-        class="w-full lg:w-1/12 h-[50px] flex justify-center items-center bg-transparent mb-6 lg:mb-0"
+        class="w-full lg:w-1/12 h-[50px] flex justify-end lg:justify-center items-center bg-transparent mb-6 lg:mb-0"
         @click="switchCurrencies"
       >
         <svg
@@ -55,6 +55,7 @@
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
+          class="rotate-90 lg:transform-none"
         >
           <g clip-path="url(#clip0_3_98)">
             <path d="M7.99 17H20V19H7.99V22L4 18L7.99 14V17Z" fill="#11B3FE" />
@@ -72,12 +73,12 @@
           type="text"
           v-model="convertCoinAmount"
           readonly
-          class="appearance-none border border-[#e3ebef] bg-[#f6f7f8] rounded-l-md w-2/3 py-3 px-4 focus:outline-none"
+          class="appearance-none border border-[#e3ebef] bg-[#f6f7f8] rounded-l-md w-3/5 md:w-2/3 py-3 px-4 focus:outline-none"
         />
 
         <div
           class="absolute top-0 right-0"
-          :class="[isConvertSelectOpen ? 'w-full z-10' : 'w-1/3']"
+          :class="[isConvertSelectOpen ? 'w-full z-10' : 'w-2/5 md:w-1/3']"
         >
           <VueMultiselect
             v-model="convertCoin"
@@ -239,7 +240,9 @@ const switchCurrencies = () => {
   border: 1px solid #e3ebef;
   background: #f6f7f8;
 }
-
+.multiselect__content-wrapper {
+  overflow-x: hidden;
+}
 .multiselect__input::placeholder {
   color: #80a2b6;
 }
