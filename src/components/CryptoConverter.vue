@@ -1,7 +1,7 @@
 <template>
   <div v-show="baseCoin && convertCoin">
-    <div class="flex flex-col lg:flex-row justify-between">
-      <div class="flex relative w-full lg:w-5/12 pb-6 mb-6 md:mb-2">
+    <div class="flex flex-col lg:flex-row justify-between mb-12 lg:mb-2">
+      <div class="flex relative w-full lg:w-5/12 pb-6">
         <input
           type="text"
           v-model.trim="baseCoinAmount"
@@ -45,7 +45,29 @@
           {{ baseAmountError }}
         </p>
       </div>
-      <div class="flex relative w-full lg:w-5/12 pb-6 mb-2">
+      <button
+        class="w-full lg:w-1/12 h-[50px] flex justify-center items-center bg-transparent mb-6 lg:mb-0"
+        @click="switchCurrencies"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g clip-path="url(#clip0_3_98)">
+            <path d="M7.99 17H20V19H7.99V22L4 18L7.99 14V17Z" fill="#11B3FE" />
+            <path d="M16.01 8H4V10H16.01V13L20 9L16.01 5V8Z" fill="#11B3FE" />
+          </g>
+          <defs>
+            <clipPath id="clip0_3_98">
+              <rect width="24" height="24" fill="white" />
+            </clipPath>
+          </defs>
+        </svg>
+      </button>
+      <div class="flex relative w-full lg:w-5/12 pb-6">
         <input
           type="text"
           v-model="convertCoinAmount"
@@ -105,7 +127,7 @@
         v-show="minAmountError || estimatedError"
         class="absolute bottom-0 right-0 w-full md:w-3/12 text-center text-[#E03F3F]"
       >
-        {{ minAmountError || estimatedError}}
+        {{ minAmountError || estimatedError }}
       </p>
     </div>
   </div>
@@ -193,6 +215,10 @@ const getEstimated = async (amount) => {
   } catch (err) {
     estimatedError.value = 'This pair is disabled now.'
   }
+}
+
+const switchCurrencies = () => {
+  ;[baseCoin.value, convertCoin.value] = [convertCoin.value, baseCoin.value]
 }
 </script>
 
