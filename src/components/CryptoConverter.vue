@@ -5,39 +5,14 @@
         <input
           type="text"
           v-model.trim="baseCoinAmount"
-          class="appearance-none border border-[#e3ebef] bg-[#f6f7f8] rounded-l-md w-3/5 md:w-2/3 py-3 px-4 focus:outline-none"
+          class="h-[49px] appearance-none border border-[#e3ebef] bg-[#f6f7f8] rounded-l-md w-3/5 md:w-2/3 py-2 px-4 focus:outline-none"
         />
-        <div class="absolute top-0 right-0" :class="[isBaseSelectOpen ? 'w-full z-10' : 'w-2/5 md:w-1/3']">
-          <VueMultiselect
-            v-model="baseCoin"
-            :options="currencies"
-            :close-on-select="true"
-            :max-height="132"
-            :hide-selected="true"
-            label="name"
-            track-by="name"
-            placeholder="Search"
-            selectLabel=""
-            selectedLabel=""
-            deselectLabel=""
-            @open="toggleBaseSelect"
-            @close="toggleBaseSelect"
-          >
-            <template v-slot:singleLabel="{ option }">
-              <div class="flex items-center">
-                <img :src="option.image" :alt="option.name" class="w-5 h-5 mr-3" />
-                <span class="uppercase truncate">{{ option.ticker }}</span>
-              </div>
-            </template>
-            <template v-slot:option="props">
-              <div class="flex items-center w-full">
-                <img :src="props.option.image" :alt="props.option.name" class="w-5 h-5 mr-5" />
-                <span class="uppercase w-1/5 truncate mr-1">{{ props.option.ticker }}</span>
-                <span class="text-[#80A2B6]">{{ props.option.name }}</span>
-              </div>
-            </template>
-          </VueMultiselect>
-        </div>
+        <SearchableDropdown
+          v-if="baseCoin"
+          :options="currencies"
+          :option="baseCoin"
+          @setOption="setBaseCoin"
+        />
         <p
           v-show="baseAmountError"
           class="absolute bottom-0 left-0 w-full text-center text-[#E03F3F]"
@@ -73,43 +48,14 @@
           type="text"
           v-model="convertCoinAmount"
           readonly
-          class="appearance-none border border-[#e3ebef] bg-[#f6f7f8] rounded-l-md w-3/5 md:w-2/3 py-3 px-4 focus:outline-none"
+          class="h-[49px] selection:appearance-none border border-[#e3ebef] bg-[#f6f7f8] rounded-l-md w-3/5 md:w-2/3 py-3 px-4 focus:outline-none"
         />
-
-        <div
-          class="absolute top-0 right-0"
-          :class="[isConvertSelectOpen ? 'w-full z-10' : 'w-2/5 md:w-1/3']"
-        >
-          <VueMultiselect
-            v-model="convertCoin"
-            :options="currencies"
-            :close-on-select="true"
-            :max-height="132"
-            :hide-selected="true"
-            label="name"
-            track-by="name"
-            placeholder="Search"
-            selectLabel=""
-            selectedLabel=""
-            deselectLabel=""
-            @open="toggleConvertSelect"
-            @close="toggleConvertSelect"
-          >
-            <template v-slot:singleLabel="{ option }">
-              <div class="flex items-center">
-                <img :src="option.image" :alt="option.name" class="w-5 h-5 mr-3" />
-                <span class="uppercase truncate">{{ option.ticker }}</span>
-              </div>
-            </template>
-            <template v-slot:option="props">
-              <div class="flex items-center">
-                <img :src="props.option.image" :alt="props.option.name" class="w-5 h-5 mr-5" />
-                <span class="uppercase w-1/5 truncate mr-1">{{ props.option.ticker }}</span>
-                <span class="text-[#80A2B6]">{{ props.option.name }}</span>
-              </div>
-            </template>
-          </VueMultiselect>
-        </div>
+        <SearchableDropdown
+          v-if="convertCoin"
+          :options="currencies"
+          :option="convertCoin"
+          @setOption="setConvertCoin"
+        />
       </div>
     </div>
     <p class="mb-2">Your Ethereum address</p>
@@ -136,8 +82,9 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import VueMultiselect from 'vue-multiselect'
 import debounce from 'lodash.debounce'
+
+import SearchableDropdown from '@/components/SearchableDropdown.vue'
 
 import Currencies from '@/api/Currencies'
 import getCurrencies from '@/composables/getCurrencies'
@@ -153,14 +100,12 @@ const baseAmountError = ref('')
 const minAmountError = ref('')
 const estimatedError = ref('')
 
-const isBaseSelectOpen = ref(false)
-const toggleBaseSelect = () => {
-  isBaseSelectOpen.value = !isBaseSelectOpen.value
+const setBaseCoin = (value) => {
+  baseCoin.value = value
 }
 
-const isConvertSelectOpen = ref(false)
-const toggleConvertSelect = () => {
-  isConvertSelectOpen.value = !isConvertSelectOpen.value
+const setConvertCoin = (value) => {
+  convertCoin.value = value
 }
 
 watch([baseCoin, convertCoin], (newValue) => {
@@ -222,55 +167,3 @@ const switchCurrencies = () => {
   ;[baseCoin.value, convertCoin.value] = [convertCoin.value, baseCoin.value]
 }
 </script>
-
-<style src="vue-multiselect/dist/vue-multiselect.css"></style>
-<style>
-.multiselect {
-  min-height: 49px;
-  color: #282828;
-}
-.multiselect__select {
-  height: 100%;
-}
-.multiselect__tags {
-  min-height: 49px;
-  border-radius: 0px;
-  border-top-right-radius: 6px;
-  border-bottom-right-radius: 6px;
-  border: 1px solid #e3ebef;
-  background: #f6f7f8;
-}
-.multiselect__content-wrapper {
-  overflow-x: hidden;
-}
-.multiselect__input::placeholder {
-  color: #80a2b6;
-}
-.multiselect__input,
-.multiselect__single {
-  min-height: 32px;
-  line-height: 32px;
-  background: #f6f7f8;
-}
-.multiselect__option--highlight,
-.multiselect__option--highlight:after {
-  background: #eaf1f7;
-  color: #282828;
-}
-.multiselect__content-wrapper::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  border-radius: 6px;
-  background-color: #eaf1f7;
-}
-
-.multiselect__content-wrapper::-webkit-scrollbar {
-  width: 6px;
-  background-color: #eaf1f7;
-}
-
-.multiselect__content-wrapper::-webkit-scrollbar-thumb {
-  border-radius: 6px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #11b3fe;
-}
-</style>
